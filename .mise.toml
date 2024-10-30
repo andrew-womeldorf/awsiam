@@ -1,5 +1,5 @@
 [tasks.build]
-run = "go build -o tmp/awsiam main.go"
+run = "go build -o tmp/awsiam ./awsiam/main.go"
 
 [tasks.run]
 run = "./tmp/awsiam $AWSIAM_ROLE"
