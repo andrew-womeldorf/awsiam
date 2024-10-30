@@ -1,0 +1,6 @@
+[tasks.build]
+run = "go build -o tmp/awsiam main.go"
+
+[tasks.run]
+run = "./tmp/awsiam $AWSIAM_ROLE"
+depends = ["build"]
