@@ -212,7 +212,14 @@ func GetPoliciesForRole(ctx context.Context, svc *iam.Client, roleName *string) 
 		}
 
 		var doc Document
-		if err := json.Unmarshal([]byte(*p.PolicyDocument), &doc); err != nil {
+		var decodedPolicy string
+
+		decodedPolicy, err = url.QueryUnescape(*p.PolicyDocument)
+		if err != nil {
+			return nil, fmt.Errorf("failed to URL-decode role policy document, %w", err)
+		}
+
+		if err := json.Unmarshal([]byte(decodedPolicy), &doc); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal role policy document, %w", err)
 		}
 
@@ -231,7 +238,7 @@ func FilterPolicies(policies PolicyDocuments, filter string) PolicyDocuments {
 		for _, stmt := range doc.Statement {
 			actions := make([]string, 0)
 			for _, action := range stmt.Action {
-				if action == filter || action[:len(filter)] == filter {
+				if action == filter || (len(action) > 1 && action[:len(filter)] == filter) {
 					actions = append(actions, action)
 				}
 			}
